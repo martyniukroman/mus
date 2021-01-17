@@ -4,19 +4,20 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
+ENV ASPNETCORE_URLS="http://*:5000"
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["mus/mus.csproj", "mus/"]
-RUN dotnet restore "mus/mus.csproj"
+COPY ["src/services/api/api.csproj", "src/services/api/"]
+RUN dotnet restore "src/services/api/api.csproj"
 COPY . .
-WORKDIR "/src/mus"
-RUN dotnet build "mus.csproj" -c Release -o /app/build
+WORKDIR "/src/src/services/api"
+RUN dotnet build "api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "mus.csproj" -c Release -o /app/publish
+RUN dotnet publish "api.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "mus.dll"]
+ENTRYPOINT ["dotnet", "api.dll"]

@@ -1,6 +1,6 @@
 using System;
 
-namespace mus
+namespace api
 {
     public class WeatherForecast
     {

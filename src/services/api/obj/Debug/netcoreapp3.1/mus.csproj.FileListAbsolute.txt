@@ -1,9 +1,0 @@
-D:\projects\mus\mus\bin\Debug\netcoreapp3.1\appsettings.Development.json
-D:\projects\mus\mus\bin\Debug\netcoreapp3.1\appsettings.json
-D:\projects\mus\mus\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
-D:\projects\mus\mus\obj\Debug\netcoreapp3.1\mus.csprojAssemblyReference.cache
-D:\projects\mus\mus\obj\Debug\netcoreapp3.1\mus.AssemblyInfoInputs.cache
-D:\projects\mus\mus\obj\Debug\netcoreapp3.1\mus.AssemblyInfo.cs
-D:\projects\mus\mus\obj\Debug\netcoreapp3.1\mus.RazorTargetAssemblyInfo.cache
-D:\projects\mus\mus\obj\Debug\netcoreapp3.1\staticwebassets\mus.StaticWebAssets.Manifest.cache
-D:\projects\mus\mus\obj\Debug\netcoreapp3.1\staticwebassets\mus.StaticWebAssets.xml
