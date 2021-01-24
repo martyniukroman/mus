@@ -1,0 +1,41 @@
+version: '0.1'
+
+services: 
+
+  auth-db:
+    image: postgres:13.1
+    environment:
+      - POSTGRES_USER=keycloack
+      - POSTGRES_PASSWORD=keycloack
+      - POSTGRES_DB=keycloack
+    ports: 
+      - 54320:5432
+  
+  auth-provider:
+    build:
+      context: ./src/services/authentication
+      dockerfile: ./Dockerfile
+    environment:
+      - KEYCLOACK_USER=root
+      - KEYCLOACK_PASSWORD=root
+      - DB_VENDOR=postgres
+      - DB_ADDR=auth-db
+      - DB_USER=keycloack
+      - DB_PASSWORD=keycloack
+    ports: 
+      - 5010:5010
+    volumes:
+      - /tm/auth-data/
+    command: 
+      ['-Djboss.http.port=5010']
+    depends_on:
+      - auth-db
+  
+  api: 
+    build: 
+      context: '/'
+      dockerfile: Dockerfile
+    working_dir: /app/services
+    ports:
+      - 5000:5000
+    

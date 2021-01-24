@@ -5,6 +5,7 @@
     <UserSecretsId>e4fe9820-4d51-4554-aba9-61dfb4fc7cdd</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>../../../</DockerfileContext>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
