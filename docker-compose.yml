@@ -1,4 +1,4 @@
-version: '0.1'
+version: "3.7"
 
 services: 
 
@@ -11,7 +11,7 @@ services:
     ports: 
       - 54320:5432
   
-  auth-provider:
+  keycloak:
     build:
       context: ./src/services/authentication
       dockerfile: ./Dockerfile
@@ -23,19 +23,17 @@ services:
       - DB_USER=keycloack
       - DB_PASSWORD=keycloack
     ports: 
-      - 5010:5010
+      - 8080:8080
     volumes:
       - /tm/auth-data/
-    command: 
-      ['-Djboss.http.port=5010']
     depends_on:
       - auth-db
   
   api: 
     build: 
-      context: '/'
+      context: './'
       dockerfile: Dockerfile
-    working_dir: /app/services
+    working_dir: /src/src/services/api
     ports:
       - 5000:5000
     
