@@ -1,39 +1,53 @@
 version: "3.7"
 
-services: 
-
+services:
+  
   auth-db:
-    image: postgres:13.1
-    environment:
-      - POSTGRES_USER=keycloack
-      - POSTGRES_PASSWORD=keycloack
-      - POSTGRES_DB=keycloack
-    ports: 
-      - 54320:5432
-  
+      image: postgres
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: password
+
   keycloak:
-    build:
-      context: ./src/services/authentication
-      dockerfile: ./Dockerfile
-    environment:
-      - KEYCLOACK_USER=root
-      - KEYCLOACK_PASSWORD=root
-      - DB_VENDOR=postgres
-      - DB_ADDR=auth-db
-      - DB_USER=keycloack
-      - DB_PASSWORD=keycloack
-    ports: 
-      - 8080:8080
-    volumes:
-      - /tm/auth-data/
-    depends_on:
-      - auth-db
+      image: quay.io/keycloak/keycloak:latest
+      environment:
+        DB_VENDOR: POSTGRES
+        DB_ADDR: auth-db
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_SCHEMA: public
+        DB_PASSWORD: password
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: admin
+      ports:
+        - 8080:8080
+      depends_on:
+        - auth-db
+
+  # keycloak:
+
+  #   build:
+  #     context: ./src/services/authentication
+  #     dockerfile: ./src/authntication/Dockerfile
+  #   environment:
+  #     - KEYCLOACK_USER=root
+  #     - KEYCLOACK_PASSWORD=root
+  #     - DB_VENDOR=postgres
+  #     - DB_ADDR=auth-db
+  #     - DB_USER=keycloack
+  #     - DB_PASSWORD=keycloack
+  #   ports: 
+  #     - 8080:8080
+  #   depends_on:
+  #     - auth-db
+
   
-  api: 
+  api:
     build: 
-      context: './'
+      context: './src/services/api'
       dockerfile: Dockerfile
-    working_dir: /src/src/services/api
+    working_dir: /app
     ports:
       - 5000:5000
     

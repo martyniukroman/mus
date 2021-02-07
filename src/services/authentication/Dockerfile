@@ -1,12 +1,14 @@
-FROM jboss/keycloak:latest
+FROM quay.io/keycloak/keycloak:latest
 
 USER root
-ADD docker-entrypoint.sh /opt/jboss/
-RUN chmod +x /opt/jboss/docker-entrypoint.sh
-RUN mkdir /opt/jboss/auth-data/
+ADD docker-entrypoint.sh /tmp/
+RUN chmod +x /tmp/docker-entrypoint.sh
+RUN mkdir /tmp/auth-data/
+RUN chown 1000 /tmp/auth-data/
+ENV KEYCLOACK_IMPORT_MODE IGNORE_EXISTING
 
 EXPOSE 8080
 
-ENTRYPOINT [ "/opt/jboss/docker-entrypoint.sh" ]
+ENTRYPOINT [ "/tmp/docker-entrypoint.sh" ]
 
-CMD ["-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "-Dkeycloak.import=/opt/jboss/keycloak-demo/keycloak/testrealm.json"]
+CMD ["-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "-Dkeycloak.import=/tmp/keycloak-demo/keycloak/testrealm.json"]
