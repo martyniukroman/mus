@@ -11,6 +11,10 @@ services:
 
   keycloak:
       image: quay.io/keycloak/keycloak:latest
+      volumes:
+        - ./src/services/authentication/realms:/opt/quay.io/keycloak/imports
+      command: 
+        - "-b 0.0.0.0 -Dkeycloak.import=/opt/quay.io/keycloak/imports/realm-export.json"
       environment:
         DB_VENDOR: POSTGRES
         DB_ADDR: auth-db
