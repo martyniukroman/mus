@@ -9,6 +9,15 @@ services:
         POSTGRES_USER: keycloak
         POSTGRES_PASSWORD: password
 
+  app-db:
+      image: postgres
+      environment:
+        POSTGRES_DB: postgres
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+      ports:
+        - 5432:5432
+
   keycloak:
       image: quay.io/keycloak/keycloak:latest
       volumes:
