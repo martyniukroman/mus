@@ -12,12 +12,11 @@ services:
   app-db:
       image: postgres
       environment:
-        POSTGRES_DB: postgres
+        POSTGRES_DB: app-db
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD: postgres
       ports:
         - 5432:5432
-
   keycloak:
       build:
         context: ./src/services/authentication

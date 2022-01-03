@@ -24,7 +24,7 @@ export class AppComponent implements OnInit{
   }
 
   
-  login(){ this._oAuthService.initImplicitFlow(); }
+  login(){ this._oAuthService.initImplicitFlow(''); }
   register(){ this._oAuthService.initImplicitFlow(); }
   logout(){ this._oAuthService.logOut(); }
 
@@ -43,8 +43,7 @@ export class AppComponent implements OnInit{
           Authorization: "Bearer " + this._oAuthService.getAccessToken()
         })
       };
-
-      this._httpClient.get('https://localhost:44304/weatherforecast', httpOptions)
+      this._httpClient.get<any>('http://localhost:5000/weatherforecast', httpOptions)
           .subscribe(result => {
               this.forecasts = result;
           }, error => console.error(error));
