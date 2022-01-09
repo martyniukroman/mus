@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace api
 {
@@ -23,6 +24,8 @@ namespace api
         {
             services.AddControllers();
 
+            services.AddMvc();
+
             services.AddCors(o => o.AddPolicy("AllowAll", builder =>
             {
                 builder.AllowAnyOrigin()
@@ -34,33 +37,47 @@ namespace api
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-            }).AddJwtBearer(o =>
-            {
-                o.Authority = Configuration["Jwt:Authority"];
-                o.Audience = Configuration["Jwt:Audience"];
-                o.RequireHttpsMetadata = false;
-
-                o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+            })
+                .AddJwtBearer(o =>
                 {
-                    ValidateAudience = false
-                };
+                    o.Authority = Configuration["JWT:Authority"];
+                    o.Audience = Configuration["JWT:Audience"];
+                    o.IncludeErrorDetails = true;
 
-                o.Events = new JwtBearerEvents()
-                {
-                    OnAuthenticationFailed = c =>
+                    o.RequireHttpsMetadata = false;
+                    o.Events = new JwtBearerEvents
                     {
-                        c.NoResult();
+                        OnAuthenticationFailed = c =>
+                        {
+                            c.NoResult();
+                            c.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                            c.Response.ContentType = "text/plain";
+                            return c.Response.WriteAsync(" Authority: " + o.Authority + " Audience: " + o.Audience + " Ex: " + c.Exception.Message + "SYSTEM.DATETIME: " + System.DateTime.UtcNow.ToString());
+                        }
+                    };
+                    o.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateAudience = false,
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = false,
+                        ValidIssuer = Configuration["JWT:AuthorityUrl"],
+                        ValidateLifetime = true,
+                        LifetimeValidator = this.LifetimeValidator,
+                    };
+                });
+            services.AddAuthorization();
 
-                        c.Response.StatusCode = 500;
-                        c.Response.ContentType = "text/plain";
+        }
 
-                        return c.Response.WriteAsync(c.Exception.ToString());
-                    }
-                };
-            });
-
+        public bool LifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+        {
+            if (expires != null)
+            {
+                if (DateTime.Now.ToUniversalTime() >= expires.Value.ToUniversalTime()) return true;
+            }
+            return false;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,8 +87,6 @@ namespace api
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseHttpsRedirection();
 
             app.UseCors("AllowAll");
 
