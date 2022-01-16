@@ -52,7 +52,7 @@ namespace api
                         OnAuthenticationFailed = c =>
                         {
                             c.NoResult();
-                            c.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                            c.Response.StatusCode = StatusCodes.Status418ImATeapot;
                             c.Response.ContentType = "text/plain";
                             return c.Response.WriteAsync(" Authority: " + o.Authority + " Audience: " + o.Audience + " Ex: " + c.Exception.Message + "SYSTEM.DATETIME: " + System.DateTime.UtcNow.ToString());
                         }
@@ -64,21 +64,21 @@ namespace api
                         ValidateIssuer = false,
                         ValidIssuer = Configuration["JWT:AuthorityUrl"],
                         ValidateLifetime = true,
-                        LifetimeValidator = this.LifetimeValidator,
+                        //LifetimeValidator = this.LifetimeValidator,
                     };
                 });
             services.AddAuthorization();
 
         }
 
-        public bool LifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
-        {
-            if (expires != null)
-            {
-                if (DateTime.Now.ToUniversalTime() >= expires.Value.ToUniversalTime()) return true;
-            }
-            return false;
-        }
+        //public bool LifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+        //{
+        //    if (expires != null)
+        //    {
+        //        if (DateTime.Now.ToUniversalTime() >= expires.Value.ToUniversalTime()) return true;
+        //    }
+        //    return false;
+        //}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
