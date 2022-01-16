@@ -42,8 +42,12 @@ namespace api
             })
                 .AddJwtBearer(o =>
                 {
-                    o.Authority = Configuration["JWT:Authority"];
-                    o.Audience = Configuration["JWT:Audience"];
+                    //o.Authority = Configuration["JWT:Authority"];
+                    //o.Audience = Configuration["JWT:Audience"];
+
+                    o.Authority = "http://localhost:8080/auth/realms/master";
+                    o.Audience = "mus-app";
+
                     o.IncludeErrorDetails = true;
 
                     o.RequireHttpsMetadata = false;
@@ -64,21 +68,13 @@ namespace api
                         ValidateIssuer = false,
                         ValidIssuer = Configuration["JWT:AuthorityUrl"],
                         ValidateLifetime = true,
-                        //LifetimeValidator = this.LifetimeValidator,
                     };
                 });
+
             services.AddAuthorization();
 
         }
 
-        //public bool LifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
-        //{
-        //    if (expires != null)
-        //    {
-        //        if (DateTime.Now.ToUniversalTime() >= expires.Value.ToUniversalTime()) return true;
-        //    }
-        //    return false;
-        //}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
