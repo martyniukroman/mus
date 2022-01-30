@@ -1,6 +1,9 @@
 FROM jboss/keycloak:latest
 
-COPY realm.json /tmp/realm.json
-ENV KEYCLOAK_IMPORT /tmp/realm.json
-ENV KEYCLOAK_IMPORT_REALM ${KEYCLOAK_IMPORT_REALM:-realm.json}
+COPY mus-realm.json /tmp/mus-realm.json
+ENV KEYCLOAK_IMPORT /tmp/mus-realm.json
+ENV KEYCLOAK_IMPORT_REALM ${KEYCLOAK_IMPORT_REALM:-mus-realm.json}
 ADD ${KEYCLOAK_IMPORT_REALM} /opt/jboss/keycloak/
+
+ENTRYPOINT [ "/opt/jboss/tools/docker-entrypoint.sh" ]
+CMD ["-b", "0.0.0.0"]

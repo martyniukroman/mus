@@ -4,7 +4,7 @@ import { AuthConfig } from 'angular-oauth2-oidc';
 export const MusAuthConfig: AuthConfig = {
 
   // Url of the Identity Provider
-  issuer: 'http://localhost:8080/auth/realms/master',
+  issuer: 'http://localhost:8080/auth/realms/mus',
 
   // URL of the SPA to redirect the user to after login
   redirectUri: window.location.origin,

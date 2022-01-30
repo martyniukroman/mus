@@ -45,7 +45,7 @@ namespace api
                     //o.Authority = Configuration["JWT:Authority"];
                     //o.Audience = Configuration["JWT:Audience"];
 
-                    o.Authority = "http://localhost:8080/auth/realms/master";
+                    o.Authority = "http://localhost:8080/auth/realms/mus";
                     o.Audience = "mus-app";
 
                     o.IncludeErrorDetails = true;
@@ -66,7 +66,8 @@ namespace api
                         ValidateAudience = false,
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = false,
-                        ValidIssuer = Configuration["JWT:AuthorityUrl"],
+                        //ValidIssuer = Configuration["JWT:AuthorityUrl"],
+                        ValidIssuer = "http://localhost:8080",
                         ValidateLifetime = true,
                     };
                 });
