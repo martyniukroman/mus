@@ -1,0 +1,60 @@
+@import '../../app.component.scss';
+
+.header-container {
+    width: 100%;
+    background-color: #161b22;
+    height: 3rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+
+
+    .right-block {
+
+        display: flex;
+
+        .profile-btn {
+            border-radius: 2rem;
+            width: 2rem;
+            height: 2rem;
+            font-weight: bolder;
+            font-size: 1.5rem;
+            background-color: var(mainBackgroundColor);
+            border-color: var(mainBackgroundColor);
+
+            .empty-profile {
+                margin: 0;
+                padding: 0;
+                line-height: 0rem;
+                margin-left: -0.12rem;
+            }
+        }
+
+    }
+
+    .left-block {
+
+        width: fit-content;
+        display: flex;
+
+        .logo {
+            display: none;
+            width: 2.8rem;
+            height: 2.8rem;
+            margin-right: 0.5rem;
+       }
+
+       .header {
+        font-size: 2rem;
+        margin: 0;
+        line-height: 2.5rem;
+       }
+    }
+
+    .center-block {
+        display: flex;
+    }
+}
