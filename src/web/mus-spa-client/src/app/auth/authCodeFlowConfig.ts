@@ -5,7 +5,7 @@ export const AuthCodeFlowConfig: AuthConfig = {
   issuer: 'http://localhost:8080/auth/realms/mus',
 
   // URL of the SPA to redirect the user to after login
-  redirectUri: window.location.origin + '/index.html',
+  redirectUri: window.location.origin,
 
   // The SPA's id. The SPA is registerd with this id at the auth-server
   // clientId: 'server.code',
@@ -23,7 +23,9 @@ export const AuthCodeFlowConfig: AuthConfig = {
   // The first four are defined by OIDC.
   // Important: Request offline_access to get a refresh token
   // The api scope is a usecase specific one
-  scope: 'openid profile email offline_access api',
+  scope: 'openid profile email',
 
   showDebugInformation: true,
+
+  requireHttps: false
 };

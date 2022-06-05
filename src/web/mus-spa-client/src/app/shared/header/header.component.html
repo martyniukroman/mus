@@ -14,9 +14,22 @@
 
     <div class="right-block">
         
-        <button type="button" class="profile-btn btn btn-primary" (click)="login()">
-            <p class="empty-profile">?</p>
-        </button>
+        <div class="profile-controlls">
+
+            <div class="btn-group">
+                <button type="button" class="profile-btn btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (click)="isMenuVisible = !isMenuVisible">
+                    <p class="empty-profile">?</p>
+                </button>
+                <div [ngStyle]="{'display': isMenuVisible ? 'block' : 'none'}" class="dropdown-menu dropdown-menu-right">
+                    <button *ngIf="!userInfo" class="dropdown-item" (click)="login()">Login</button>
+                    <button *ngIf="userInfo" class="dropdown-item">Profile</button>
+                    <div *ngIf="userInfo" class="dropdown-divider"></div>
+                    <button *ngIf="userInfo" class="dropdown-item" (click)="logout()">Logout</button>
+                </div>
+            </div>
+
+            <span class="profile-controlls-username" *ngIf="userInfo" (click)="isMenuVisible = !isMenuVisible">{{userInfo.preferred_username}}</span>
+        </div>
 
     </div>
 

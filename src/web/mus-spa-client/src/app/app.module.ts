@@ -1,6 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { OAuthModule } from 'angular-oauth2-oidc';
 
@@ -16,8 +17,7 @@ import { SharedModule } from './shared/shared.module';
     HttpClientModule,
     NgbModule,
     OAuthModule.forRoot(),
-
-    SharedModule
+    SharedModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
