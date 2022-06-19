@@ -1,4 +1,4 @@
-@import '../../app.component.scss';
+@import '../../../app.component.scss';
 
 .header-container {
     width: 100%;
@@ -16,6 +16,8 @@
     .right-block {
 
         display: flex;
+        width: 20rem;
+        justify-content: end;
 
         .profile-controlls {
 
@@ -56,6 +58,7 @@
 
         width: fit-content;
         display: flex;
+        width: 20rem;
 
         .logo {
             display: none;
@@ -72,6 +75,7 @@
     }
 
     .center-block {
+        cursor: pointer;
         display: flex;
         user-select: none;
     }

@@ -30,7 +30,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public login(): void {
     console.log('login');
     this._authService.implicit();
-    this._getUserInfo();
+    setTimeout(() => {
+      this._getUserInfo();
+    }, 0);
   }
 
   public logout(): void {
@@ -47,6 +49,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this._router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
     };
+  }
+
+  public goHome() : void {
+    this._router.navigate(['mus']);
+  }
+
+  public goProfile(): void {
+      this._router.navigate(['user/profile']);
   }
 
 }
