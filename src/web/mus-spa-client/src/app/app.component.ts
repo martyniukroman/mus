@@ -1,53 +1,32 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { JwksValidationHandler, OAuthService } from 'angular-oauth2-oidc';
-import { MusAuthConfig } from './shared/auth/auth.config';
+import { Component } from '@angular/core';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
+import { AuthCodeFlowConfig } from './auth/authCodeFlowConfig';
+import { AuthService } from './auth/services/auth.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit{
+export class AppComponent {
   title = 'mus-spa-client';
 
-  constructor(private readonly _oAuthService: OAuthService,
-    private readonly _httpClient: HttpClient) {
-    
+  constructor(private _authService: OAuthService) {
   }
 
   ngOnInit(): void {
-    this._oAuthService.configure(MusAuthConfig);
-    this._oAuthService.tokenValidationHandler = 
-      new JwksValidationHandler();
-    this._oAuthService.loadDiscoveryDocumentAndTryLogin();
+    this._authService.configure(AuthCodeFlowConfig);
+    this._authService.tokenValidationHandler = new JwksValidationHandler();
+    this._authService.loadDiscoveryDocumentAndTryLogin();
   }
 
+  public login() {
+    this._authService.initLoginFlow();
+  }
+
+  public implicit() {
+    this._authService.initImplicitFlow();
+  }
   
-  login(){ this._oAuthService.initImplicitFlow(); }
-  register(){ this._oAuthService.initLoginFlow(); }
-  logout(){ this._oAuthService.logOut(); }
-
-  get givenName() {
-    let claims = this._oAuthService.getIdentityClaims();
-    if(!claims) return null;
-    return (claims as any).preferred_username;
-  }
-
-  public forecasts: any;
-
-  getWeather(): void {
-      const httpOptions = {
-        headers: new HttpHeaders({
-          'Content-Type':  'application/json',
-          Authorization: "Bearer " + this._oAuthService.getAccessToken()
-        })
-      };
-      this._httpClient.get<any>('https://localhost:44304/weatherforecast/auth', httpOptions)
-      //this._httpClient.get<any>('http://localhost:5000/weatherforecast/auth', httpOptions)
-          .subscribe(result => {
-              this.forecasts = result;
-          }, error => console.error(error));
-  }
-
 }

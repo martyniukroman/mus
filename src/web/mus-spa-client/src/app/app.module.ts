@@ -1,10 +1,19 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { Router, RouterModule } from '@angular/router';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { OAuthModule } from 'angular-oauth2-oidc';
 
 import { AppComponent } from './app.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { UserModule } from './modules/user/user.module';
+import { LandingComponent } from './shared/components/landing/landing.component';
+import { SharedModule } from './shared/shared.module';
+
+const importModules: any[] = [
+  UserModule,
+  SharedModule,
+]
 
 @NgModule({
   declarations: [
@@ -13,10 +22,18 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   imports: [
     BrowserModule,
     HttpClientModule,
+    NgbModule,
     OAuthModule.forRoot(),
-    NgbModule
-  ],
-  providers: [HttpClient],
+    RouterModule.forRoot(
+      [
+        { path: '', component: LandingComponent },
+        { path: 'mus', component: LandingComponent },
+        { path: 'user', loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule) }
+      ]
+      ),
+      ...importModules
+    ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

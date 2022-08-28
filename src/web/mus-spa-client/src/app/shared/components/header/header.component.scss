@@ -1,0 +1,82 @@
+@import '../../../app.component.scss';
+
+.header-container {
+    width: 100%;
+    background-color: #161b22;
+    height: 3rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    background: rgba(22, 27, 34, 0.5);
+    backdrop-filter: blur(10px);
+
+    .right-block {
+
+        display: flex;
+        width: 20rem;
+        justify-content: end;
+
+        .profile-controlls {
+
+            &-username {
+                margin: 0 0.5rem;
+                user-select: none;
+                font-weight: 700;
+                cursor: pointer;
+            }
+
+            .profile-btn {
+                border-radius: 2rem;
+                width: 2rem;
+                height: 2rem;
+                font-weight: bolder;
+                font-size: 1.5rem;
+                background-color: var(mainBackgroundColor);
+                border-color: var(mainBackgroundColor);
+
+
+                &::after {
+                    display: none;
+                    visibility: collapse;
+                }
+
+                .empty-profile {
+                    margin: 0;
+                    padding: 0;
+                    line-height: 0rem;
+                    margin-left: -0.12rem;
+                }
+            }
+        }
+
+    }
+
+    .left-block {
+
+        width: fit-content;
+        display: flex;
+        width: 20rem;
+
+        .logo {
+            display: none;
+            width: 2.8rem;
+            height: 2.8rem;
+            margin-right: 0.5rem;
+       }
+
+       .header {
+        font-size: 2rem;
+        margin: 0;
+        line-height: 2.5rem;
+       }
+    }
+
+    .center-block {
+        cursor: pointer;
+        display: flex;
+        user-select: none;
+    }
+}
