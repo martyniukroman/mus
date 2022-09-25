@@ -1,87 +1,67 @@
-using System;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using api.Services;
+using application;
+using application.common.interfaces;
+using FluentValidation.AspNetCore;
+using infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using persistence;
+using System.Text;
 
 namespace api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private IServiceCollection _services;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
 
+        public IWebHostEnvironment Environment { get; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen(c => {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "SwaggerDemoApplication",
-                    Version = "v1"
-                });
+            services.AddInfrastructure(Configuration, Environment);
+            services.AddPersistence(Configuration);
+            services.AddApplication();
+
+            //services.AddHealthChecks()
+            //    .AddDbContextCheck<>();
+
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            services.AddHttpContextAccessor();
+
+            services
+                .AddControllersWithViews()
+                .AddNewtonsoftJson()
+                //.AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<IMusDbContext>())
+                ;
+
+            services.AddRazorPages();
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
             });
 
-            services.AddControllers();
-
-            services.AddMvc();
-
-            services.AddCors(o => o.AddPolicy("AllowAll", builder =>
+            services.AddOpenApiDocument( configure =>
             {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
-            }));
+                configure.Title = "MUS API";
+            });
 
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(o =>
-                {
-                    //o.Authority = Configuration["JWT:Authority"];
-                    //o.Audience = Configuration["JWT:Audience"];
-
-                    o.Authority = "http://localhost:8080/auth/realms/mus";
-                    o.Audience = "mus-app";
-
-                    o.IncludeErrorDetails = true;
-
-                    o.RequireHttpsMetadata = false;
-                    o.Events = new JwtBearerEvents
-                    {
-                        OnAuthenticationFailed = c =>
-                        {
-                            c.NoResult();
-                            c.Response.StatusCode = StatusCodes.Status418ImATeapot;
-                            c.Response.ContentType = "text/plain";
-                            return c.Response.WriteAsync(" Authority: " + o.Authority + " Audience: " + o.Audience + " Ex: " + c.Exception.Message + "SYSTEM.DATETIME: " + System.DateTime.UtcNow.ToString());
-                        }
-                    };
-                    o.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateAudience = false,
-                        ValidateIssuerSigningKey = true,
-                        ValidateIssuer = false,
-                        //ValidIssuer = Configuration["JWT:AuthorityUrl"],
-                        ValidIssuer = "http://localhost:8080",
-                        ValidateLifetime = true,
-                    };
-                });
-
-            services.AddAuthorization();
+            this._services = services;
 
         }
 
@@ -89,28 +69,64 @@ namespace api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+                RegisteredServicesPage(app);
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c => {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SwaggerMus V1 ");
-            });
+            app.UseCustomExceptionHandler();
+            app.UseHealthChecks("/health");
+            app.UseHttpsRedirection();
 
-            app.UseCors("AllowAll");
+            app.UseOpenApi();
+
+            app.UseSwaggerUi3(settings => {
+                settings.Path = "api";
+            });
 
             app.UseRouting();
 
             app.UseAuthentication();
-
+            app.UseIdentityServer();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapControllers();
+                endpoints.MapRazorPages();
             });
+        }
+
+        private void RegisteredServicesPage(IApplicationBuilder app)
+        {
+            app.Map("/services", builder => builder.Run(async context =>
+            {
+                var sb = new StringBuilder();
+                sb.Append("<h1>Registered Services</h1>");
+                sb.Append("<table><thead>");
+                sb.Append("<tr><th>Type</th><th>Lifetime</th><th>Instance</th></tr>");
+                sb.Append("</thead><tbody>");
+                foreach (var svc in _services)
+                {
+                    sb.Append("<tr>");
+                    sb.Append($"<td>{svc.ServiceType.FullName}</td>");
+                    sb.Append($"<td>{svc.Lifetime}</td>");
+                    sb.Append($"<td>{svc.ImplementationType?.FullName}</td>");
+                    sb.Append("</tr>");
+                }
+                sb.Append("</tbody></table>");
+                await context.Response.WriteAsync(sb.ToString());
+            }));
         }
     }
 }
