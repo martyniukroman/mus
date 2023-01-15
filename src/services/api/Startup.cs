@@ -36,8 +36,8 @@ namespace api
             services.AddPersistence(Configuration);
             services.AddApplication();
 
-            //services.AddHealthChecks()
-            //    .AddDbContextCheck<>();
+            services.AddHealthChecks()
+                .AddDbContextCheck<>();
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 

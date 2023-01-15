@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace application.common.interfaces
 {
-    public interface ICurrentUserService
+    public interface IMusDbContext
     {
-        Guid UserId { get; }
-        bool IsAuthenticated { get; }
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

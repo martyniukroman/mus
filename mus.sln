@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api", "src\services\api\api.csproj", "{71DB9A55-C0F9-4B15-A735-0D6DB0FBB936}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{930C8631-4082-47F8-993B-489D1C17FF89}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C974F535-6F45-4621-BBE3-27287C4C1777}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{5646905A-D756-4D90-AFBF-936EA28C03E8}"
@@ -21,9 +19,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "domain", "domain\domain.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "common", "common\common.csproj", "{36B73D32-0B4F-4C59-B83D-4C5BC6CBC2ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "infrastructure", "infrastructure\infrastructure.csproj", "{D8685C2F-2A66-441F-8493-D1F32C809281}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "infrastructure", "infrastructure\infrastructure.csproj", "{D8685C2F-2A66-441F-8493-D1F32C809281}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "persistence", "persistence\persistence.csproj", "{5AA4158A-C003-44AB-94B4-F12341343B87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "persistence", "persistence\persistence.csproj", "{5AA4158A-C003-44AB-94B4-F12341343B87}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{F282D117-65DE-4885-8D6F-511AFC369DBD}"
+	ProjectSection(SolutionItems) = preProject
+		docs\readme.md = docs\readme.md
+		docs\Slides.pdf = docs\Slides.pdf
+		docs\startup.md = docs\startup.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B8EC7B31-005D-4ABD-A5B0-6C2D01840D3F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
