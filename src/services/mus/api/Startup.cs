@@ -37,19 +37,11 @@ namespace api
             services.AddApplication();
 
             services.AddHealthChecks()
-                .AddDbContextCheck<>();
+                .AddDbContextCheck<MusDbContext>();
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             services.AddHttpContextAccessor();
-
-            services
-                .AddControllersWithViews()
-                .AddNewtonsoftJson()
-                //.AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<IMusDbContext>())
-                ;
-
-            services.AddRazorPages();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -61,8 +53,16 @@ namespace api
                 configure.Title = "MUS API";
             });
 
-            this._services = services;
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<IMusDbContext>());
 
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
+            this._services = services;
         }
 
 
@@ -72,7 +72,6 @@ namespace api
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
                 RegisteredServicesPage(app);
             }
             else
@@ -89,7 +88,7 @@ namespace api
             app.UseOpenApi();
 
             app.UseSwaggerUi3(settings => {
-                settings.Path = "api";
+                settings.Path = "/api";
             });
 
             app.UseRouting();
@@ -103,7 +102,6 @@ namespace api
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapControllers();
-                endpoints.MapRazorPages();
             });
         }
 

@@ -8,7 +8,7 @@ namespace application.common.interfaces
 {
     public interface ICurrentUserService
     {
-        Guid UserId { get; }
+        string UserId { get; }
         bool IsAuthenticated { get; }
     }
 }
