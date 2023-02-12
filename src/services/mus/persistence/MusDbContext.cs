@@ -1,59 +1,37 @@
 ﻿using application.common.interfaces;
-using common;
 using domain.applicationExceptions;
+using domain.entities;
+using Duende.IdentityServer.EntityFramework.Options;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using persistence.contextInterceptors;
+using System.Reflection;
 
-namespace persistence
+namespace persistence;
+
+public class MusDbContext : ApiAuthorizationDbContext<ApplicationUser>
 {
-    public class MusDbContext : DbContext, IMusDbContext
+
+    private readonly AuditableEntityInterceptor _auditableEntityInterceptor;
+
+    public MusDbContext(DbContextOptions<MusDbContext> options,
+        IOptions<OperationalStoreOptions> operationalStoreOptions,
+        AuditableEntityInterceptor auditableEntityInterceptor) :
+        base(options, operationalStoreOptions)
     {
+        _auditableEntityInterceptor = auditableEntityInterceptor;
+    }       
 
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IDateTime _dateTime;
-
-        public MusDbContext(DbContextOptions<MusDbContext> options)
-            : base(options)
-        {
-        }
-
-        public MusDbContext(
-           DbContextOptions<MusDbContext> options,
-           ICurrentUserService currentUserService,
-           IDateTime dateTime)
-           : base(options)
-        {
-            _currentUserService = currentUserService;
-            _dateTime = dateTime;
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
-        {
-            foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
-            {
-                switch (entry.State)
-                {
-                    case EntityState.Added:
-                        entry.Entity.CreatedBy = _currentUserService?.UserId;
-                        entry.Entity.CreatedOn = _dateTime.Now;
-                        break;
-                    case EntityState.Modified:
-                        entry.Entity.UpdatedBy = _currentUserService?.UserId;
-                        entry.Entity.UpdatedOn = _dateTime.Now;
-                        break;
-                }
-            }
-
-            return base.SaveChangesAsync(cancellationToken);
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(MusDbContext).Assembly);
-        }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        base.OnModelCreating(modelBuilder);
     }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(_auditableEntityInterceptor);
+    }
+
 }

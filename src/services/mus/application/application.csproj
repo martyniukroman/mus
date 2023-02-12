@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="users\" />
     <Folder Include="system\seed\" />
+    <Folder Include="users\Commands\" />
   </ItemGroup>
 
   <ItemGroup>
