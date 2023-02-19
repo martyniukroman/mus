@@ -94,9 +94,9 @@ namespace api
 
             //using (var scope = app.ApplicationServices.CreateScope())
             //{
-                //var initialiser = app.ApplicationServices.GetService<DbInitializer>();
-                //await initialiser.InitialiseAsync();
-                //await initialiser.TrySeedAsync();
+            //  var initialiser = app.ApplicationServices.GetService<DbInitializer>();
+            //     await initialiser.InitialiseAsync();
+            //    await initialiser.TrySeedAsync();
             //}
 
             //app.UseCustomExceptionHandler();
@@ -112,8 +112,9 @@ namespace api
             app.UseRouting();
 
             app.UseAuthentication();
-            app.UseIdentityServer();
             app.UseAuthorization();
+            app.UseIdentityServer();
+            
 
             app.UseEndpoints(endpoints =>
             {

@@ -11,9 +11,9 @@ public class DbInitializer
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
 
-    private const string AdministratorsRole = "Administrators";
-    private const string UserRole = "Users";
-    private const string DefaultPassword = "qwerty";
+    private const string AdministratorsRole = "Administrator";
+    private const string UserRole = "User";
+    private const string DefaultPassword = "123Admin!";
 
     public DbInitializer(
         MusDbContext context,
@@ -62,31 +62,36 @@ public class DbInitializer
         administratorRole.Name = AdministratorsRole;
 
         var userRole = new IdentityRole();
-        userRole.Name = UserRole;
+        userRole.Name = UserRole;        
 
-        var roles = new List<IdentityRole>
+        if (_roleManager.Roles.All(r => r.Name != administratorRole.Name))
         {
-            userRole,
-            administratorRole
-        };
+            await this._roleManager.CreateAsync(administratorRole);
+        }
 
-        roles.ForEach(async x =>
+        if (_roleManager.Roles.All(r => r.Name != userRole.Name))
         {
-            await this._roleManager.CreateAsync(x);
-        });
+            await this._roleManager.CreateAsync(administratorRole);
+        }
 
-        await _context.SaveChangesAsync();
+        //await _context.SaveChangesAsync();
 
         // Default users
-
         var administrator = new ApplicationUser { UserName = "admin", Email = "admin@gmail.com" };
-        await _userManager.CreateAsync(administrator, DefaultPassword);
-        //await _userManager.AddToRolesAsync(administrator, new[] { AdministratorsRole, UserRole });
 
+        if (_userManager.Users.All(u => u.UserName != administrator.UserName))
+        {
+            await _userManager.CreateAsync(administrator, DefaultPassword);
+            await _userManager.AddToRolesAsync(administrator, new[] { administratorRole.Name });
+        }
 
         var user = new ApplicationUser { UserName = "user", Email = "user@gmail.com" };
-        await _userManager.CreateAsync(user, DefaultPassword);
-        //await _userManager.AddToRolesAsync(user, new[] { UserRole });
+
+        if (_userManager.Users.All(u => u.UserName != user.UserName))
+        {
+            await _userManager.CreateAsync(user, DefaultPassword);
+            await _userManager.AddToRolesAsync(user, new[] { UserRole });
+        }
 
         await _context.SaveChangesAsync();
 

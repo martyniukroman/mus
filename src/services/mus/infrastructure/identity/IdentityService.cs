@@ -1,5 +1,6 @@
 ﻿using application.common.interfaces;
 using domain.entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,14 +12,17 @@ public class IdentityService : IIdentityService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IAuthenticationService _authenticationService;
 
     public IdentityService(UserManager<ApplicationUser> userManager,
          IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
-        IAuthorizationService authorizationService)
+        IAuthorizationService authorizationService,
+        IAuthenticationService authenticationService)
     {
         _userManager = userManager;
         _authorizationService = authorizationService;        
         _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
+        _authenticationService = authenticationService;
     }
 
     public async Task<bool> AuthorizeAsync(string userId, string policyName)
@@ -67,4 +71,20 @@ public class IdentityService : IIdentityService
         var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
         return user != null && await _userManager.IsInRoleAsync(user, role);
     }
+
+    //public async Task<bool> AuthenticateAsync(string userId, string policyName)
+    //{
+    //    var user = await this._userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+
+    //    if (user == null)
+    //    {
+    //        return false;
+    //    }
+
+    //    var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+
+    //    //this._userManager.authenca
+
+    //    return result.Succeeded;
+    //}
 }

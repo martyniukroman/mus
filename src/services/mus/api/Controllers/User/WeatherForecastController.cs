@@ -1,8 +1,10 @@
 ﻿using domain.entities;
+using infrastructure.identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace api.Controllers.User;
 
@@ -15,11 +17,13 @@ public class WeatherForecastController : BaseController
 
     private readonly ILogger<WeatherForecastController> _logger;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly DbInitializer _dbInitializer;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, UserManager<ApplicationUser> userManager)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, UserManager<ApplicationUser> userManager, DbInitializer dbInitializer)
     {
         _logger = logger;
         _userManager = userManager;
+        _dbInitializer = dbInitializer;
     }
 
     [Authorize]
@@ -43,4 +47,13 @@ public class WeatherForecastController : BaseController
 
         return Ok(responce);
     }
+
+    [HttpPost]
+    public async Task init()
+    {
+        await this._dbInitializer.InitialiseAsync();
+        await this._dbInitializer.TrySeedAsync();
+    }
 }
+
+
