@@ -16,6 +16,8 @@ using NSwag;
 using persistence;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace api
 {
@@ -36,15 +38,63 @@ namespace api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddInfrastructure(Configuration, Environment);
+            services.AddInfrastructure();
             services.AddPersistence(Configuration);
             services.AddApplication();
             services.AddHttpContextAccessor();
+
+            services.AddControllers();
+
+            services.AddCors(o => o.AddPolicy("AllowAll", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
 
             services.AddHealthChecks()
                 .AddDbContextCheck<MusDbContext>();
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(o =>
+            {
+                //o.Authority = Configuration["JWT:Authority"];
+                //o.Audience = Configuration["JWT:Audience"];
+
+                o.Authority = "http://localhost:8080/auth/realms/mus";
+                o.Audience = "mus-app";
+
+                o.IncludeErrorDetails = true;
+
+                o.RequireHttpsMetadata = false;
+                o.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = c =>
+                    {
+                        c.NoResult();
+                        c.Response.StatusCode = StatusCodes.Status418ImATeapot;
+                        c.Response.ContentType = "text/plain";
+                        return c.Response.WriteAsync(" Authority: " + o.Authority + " Audience: " + o.Audience + " Ex: " + c.Exception.Message + "SYSTEM.DATETIME: " + System.DateTime.UtcNow.ToString());
+                    }
+                };
+                o.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    //ValidIssuer = Configuration["JWT:AuthorityUrl"],
+                    ValidIssuer = "http://localhost:8080",
+                    ValidateLifetime = true,
+                };
+            });
+
+            services.AddAuthorization();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -65,13 +115,6 @@ namespace api
                 configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
             });
 
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
-
-
-
             this._services = services;
         }
 
@@ -88,18 +131,10 @@ namespace api
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
-            //using (var scope = app.ApplicationServices.CreateScope())
-            //{
-            //  var initialiser = app.ApplicationServices.GetService<DbInitializer>();
-            //     await initialiser.InitialiseAsync();
-            //    await initialiser.TrySeedAsync();
-            //}
 
-            //app.UseCustomExceptionHandler();
             app.UseHealthChecks("/health");
             app.UseHttpsRedirection();
 
@@ -109,42 +144,18 @@ namespace api
                 settings.Path = "/swagger";
             });
 
+            app.UseCors("AllowAll");
+
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseIdentityServer();
-            
+
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapControllers();
             });
         }
-
-        //private void RegisteredServicesPage(IApplicationBuilder app)
-        //{
-        //    app.Map("/services", builder => builder.Run(async context =>
-        //    {
-        //        var sb = new StringBuilder();
-        //        sb.Append("<h1>Registered Services</h1>");
-        //        sb.Append("<table><thead>");
-        //        sb.Append("<tr><th>Type</th><th>Lifetime</th><th>Instance</th></tr>");
-        //        sb.Append("</thead><tbody>");
-        //        foreach (var svc in _services)
-        //        {
-        //            sb.Append("<tr>");
-        //            sb.Append($"<td>{svc.ServiceType.FullName}</td>");
-        //            sb.Append($"<td>{svc.Lifetime}</td>");
-        //            sb.Append($"<td>{svc.ImplementationType?.FullName}</td>");
-        //            sb.Append("</tr>");
-        //        }
-        //        sb.Append("</tbody></table>");
-        //        await context.Response.WriteAsync(sb.ToString());
-        //    }));
-        //}
     }
 }

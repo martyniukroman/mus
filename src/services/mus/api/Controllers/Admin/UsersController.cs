@@ -15,42 +15,42 @@ namespace api.Controllers.Admin;
 [ApiController]
 public class UsersController : BaseController
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IIdentityService _identityService;
-
-    public UsersController(UserManager<ApplicationUser> userManager, IIdentityService identityService)
+    public UsersController()
     {
-        this._userManager = userManager;
-        this._identityService = identityService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
-        return await _userManager.Users
-            .OrderBy(u => u.UserName)
-            .Select(u => new UserDto(u.Id, u.UserName ?? string.Empty, u.Email ?? string.Empty))
-            .ToListAsync();
+        //return await _userManager.Users
+        //    .OrderBy(u => u)
+        //    .Select(u => new UserDto(u.Id, u.UserName ?? string.Empty, u.Email ?? string.Empty))
+        //    .ToListAsync();
+        return Ok();
     }
 
     [HttpPost]
-    public async Task<dynamic> register(string email, string password)
+    public async Task<dynamic> Register(string email, string password)
     {
-        return Ok(await this._identityService.CreateUserAsync(email, password));
+        //return Ok(await this._identityService.CreateUserAsync(email, password))
+        return Ok();
     }
 
     [HttpPut]
-    public async Task<dynamic> auth(string userId, string policy)
+    public async Task<dynamic> Auth(string userId, string policy)
     {
-        try
-        {
-            return Ok(await this._identityService.AuthorizeAsync(userId, policy));
-        }
-        catch (System.Exception ex)
-        {
-            Console.WriteLine(ex);
-            return BadRequest(ex);
-        }
+
+        return Ok();
+
+        //try
+        //{
+        //    return Ok(await this._identityService.AuthorizeAsync(userId, policy));
+        //}
+        //catch (System.Exception ex)
+        //{
+        //    Console.WriteLine(ex);
+        //    return BadRequest(ex);
+        //}
 
     }
 

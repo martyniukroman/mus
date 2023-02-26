@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace api.Controllers.User;
@@ -16,28 +19,23 @@ public class WeatherForecastController : BaseController
     };
 
     private readonly ILogger<WeatherForecastController> _logger;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly DbInitializer _dbInitializer;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, UserManager<ApplicationUser> userManager, DbInitializer dbInitializer)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger)
     {
         _logger = logger;
-        _userManager = userManager;
-        _dbInitializer = dbInitializer;
     }
 
     [Authorize]
     [HttpGet]
-    [Route("Auth")]
-    public ActionResult<string> Get()
+    public ActionResult<string> GetAuth()
     {
-        return Ok("responce");
+        return Ok(new { weatherData = Summaries[RandomNumberGenerator.GetInt32(Summaries.Count() - 1)] });
     }
 
     [HttpGet]
     public ActionResult<string> GetNoAuth()
     {
-        return Ok("responce");
+        return Ok(new { weatherData = Summaries[RandomNumberGenerator.GetInt32(Summaries.Count() - 1)] });
     }
 
     [HttpGet]
@@ -46,13 +44,6 @@ public class WeatherForecastController : BaseController
         string responce = string.Empty;
 
         return Ok(responce);
-    }
-
-    [HttpPost]
-    public async Task init()
-    {
-        await this._dbInitializer.InitialiseAsync();
-        await this._dbInitializer.TrySeedAsync();
     }
 }
 

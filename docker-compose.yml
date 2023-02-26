@@ -72,16 +72,16 @@ services:
   #     - auth-db
 
   
-  api:
-    build: 
-      context: './src/services/api'
-      dockerfile: Dockerfile
-    working_dir: /app
-    ports:
-      - 5000:5000
-    environment: 
-        JWT__Authority: 'http://localhost:8080/auth/realms/master'
-        JWT__Audience: 'mus-app'
+  # api:
+  #   build: 
+  #     context: './src/services/mus/api'
+  #     dockerfile: Dockerfile
+  #   working_dir: /app
+  #   ports:
+  #     - 5000:5000
+  #   environment: 
+  #       JWT__Authority: 'http://localhost:8080/auth/realms/master'
+  #       JWT__Audience: 'mus-app'
 
 volumes:
  db-data:

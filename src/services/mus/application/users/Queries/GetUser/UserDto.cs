@@ -26,7 +26,6 @@ public class UserDto : IMapFrom<ApplicationUser>
 
     public void Mapping(Profile profile)
     {
-        profile.CreateMap<ApplicationUser, UserDto>()
-            .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id));
+        profile.CreateMap<ApplicationUser, UserDto>();
     }
 }
