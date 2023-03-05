@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy } from '@angular/compiler';
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/services/auth.service';
 
@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/auth/services/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit, OnDestroy, OnChanges {
 
   public userInfo: any = undefined;
   public isMenuVisible: boolean = false;
@@ -18,6 +18,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private _cdr: ChangeDetectorRef,
     private _router: Router
   ) { }
+
+  ngOnChanges(): void {
+    this._getUserInfo();
+  }
 
   ngOnInit(): void {
     this._getUserInfo();

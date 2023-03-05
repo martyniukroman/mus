@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
@@ -8,6 +8,7 @@ import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
 import { UserModule } from './modules/user/user.module';
 import { LandingComponent } from './shared/components/landing/landing.component';
+import { TokenInterceptor } from './shared/Interceptors/token.interceptor';
 import { SharedModule } from './shared/shared.module';
 
 const importModules: any[] = [
@@ -33,7 +34,13 @@ const importModules: any[] = [
       ),
       ...importModules
     ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

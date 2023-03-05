@@ -79,7 +79,7 @@ namespace api
                     OnAuthenticationFailed = c =>
                     {
                         c.NoResult();
-                        c.Response.StatusCode = StatusCodes.Status418ImATeapot;
+                        c.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         c.Response.ContentType = "text/plain";
                         return c.Response.WriteAsync(" Authority: " + o.Authority + " Audience: " + o.Audience + " Ex: " + c.Exception.Message + "SYSTEM.DATETIME: " + System.DateTime.UtcNow.ToString());
                     }
