@@ -1,6 +1,6 @@
-import { AuthConfig } from 'angular-oauth2-oidc';
+// import { AuthConfig } from 'angular-oauth2-oidc';
 
-export const AuthCodeFlowConfig: AuthConfig = {
+export const AuthCodeFlowConfig: any = {
   // Url of the Identity Provider
   issuer: 'http://localhost:8080/auth/realms/mus',
 

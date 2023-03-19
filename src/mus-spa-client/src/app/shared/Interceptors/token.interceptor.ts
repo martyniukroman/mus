@@ -5,9 +5,7 @@ import {
   HttpEvent,
   HttpInterceptor
 } from '@angular/common/http';
-import { BehaviorSubject, finalize, map, Observable, tap } from 'rxjs';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { responceModel } from '../components/landing/landing.component';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -16,10 +14,10 @@ export class TokenInterceptor implements HttpInterceptor {
   private isTokenRefreshing: boolean = false;
   private errorString: string = '';
 
-  constructor(private _authService: OAuthService) {}
+  constructor() {}
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    const header = this._authService.authorizationHeader();
+    const header = '';
 
     console.log(header);
 
@@ -58,7 +56,7 @@ export class TokenInterceptor implements HttpInterceptor {
 
             console.log('error->');
             console.log(error);
-            this._authService.refreshToken();
+            // this._authService.refreshToken();
 
             if (error.status) {
               if (error.error) {
@@ -69,7 +67,7 @@ export class TokenInterceptor implements HttpInterceptor {
                   this.errorString += ' ' + error.error;
                 }
                 if (error.error.afterAction == 'relogin') {
-                  this._authService.logOut();
+                  // this._authService.logOut();
                 }
               }
               if (error.status == 401 ) {
@@ -92,7 +90,7 @@ export class TokenInterceptor implements HttpInterceptor {
   private setTokenResponse(): void {
     if (!this.isTokenRefreshing) {
       this.isTokenRefreshing = true;
-      this._authService.refreshToken();
+      // this._authService.refreshToken();
     } 
   }
 

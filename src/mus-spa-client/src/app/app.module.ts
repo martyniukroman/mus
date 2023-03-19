@@ -1,9 +1,9 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { KeycloakService } from 'keycloak-angular';
 
 import { AppComponent } from './app.component';
 import { UserModule } from './modules/user/user.module';
@@ -16,6 +16,23 @@ const importModules: any[] = [
   SharedModule,
 ]
 
+function initializeKeycloak(keycloak: KeycloakService) {
+  return () =>
+    keycloak.init({
+      config: {
+        url: 'http://localhost:8080',
+        realm: 'mus',
+        clientId: 'mus-app'
+      },
+      initOptions: {
+        onLoad: 'check-sso',
+        silentCheckSsoRedirectUri:
+          window.location.origin + '/assets/silent-check-sso.html'
+      }
+    });
+}
+
+
 @NgModule({
   declarations: [
     AppComponent
@@ -24,7 +41,6 @@ const importModules: any[] = [
     BrowserModule,
     HttpClientModule,
     NgbModule,
-    OAuthModule.forRoot(),
     RouterModule.forRoot(
       [
         { path: '', component: LandingComponent },
@@ -40,6 +56,12 @@ const importModules: any[] = [
       useClass: TokenInterceptor,
       multi: true,
     },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeKeycloak,
+      multi: true,
+      deps: [KeycloakService]
+    }
   ],
   bootstrap: [AppComponent]
 })
