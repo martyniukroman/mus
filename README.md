@@ -10,5 +10,5 @@ Run with docker compose: ```docker-compose up```
 ## Notes:
 
 - spa target port is - 44304 (Runing api with IIS)
-- keycloack - realm should be imported on docker-compose not to setup client's properties each time
+- keycloack - realm should be imported on docker-compose not to setup client's properties each time (done)
 
