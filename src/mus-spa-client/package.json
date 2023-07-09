@@ -22,7 +22,7 @@
     "@ng-bootstrap/ng-bootstrap": "^11.0.0",
     "bootstrap": "^4.6.0",
     "keycloak-angular": "^13.0.0",
-    "keycloak-js": "^21.0.1",
+    "keycloak-js": "^21.0.2",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

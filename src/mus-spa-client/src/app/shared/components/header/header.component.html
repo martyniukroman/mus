@@ -8,27 +8,29 @@
 
     <div class="center-block" (click)="goHome()">
         
-        <h1 class="header">MUS</h1>    
+        <h3 class="header">MUS</h3>    
 
     </div>
 
     <div class="right-block">
         
-        <div class="profile-controlls">
+        <p class="username" *ngIf="userProfile">{{userProfile.email}}</p>
 
+        <div class="profile-controlls">
             <div class="btn-group">
                 <button type="button" class="profile-btn btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (click)="isMenuVisible = !isMenuVisible">
                     <p class="empty-profile">?</p>
                 </button>
                 <div [ngStyle]="{'display': isMenuVisible ? 'block' : 'none'}" class="dropdown-menu dropdown-menu-right">
-                    <button *ngIf="!userInfo" class="dropdown-item" (click)="login()">Login</button>
-                    <button *ngIf="userInfo" class="dropdown-item" (click)="goProfile()">Profile</button>
-                    <div *ngIf="userInfo" class="dropdown-divider"></div>
-                    <button *ngIf="userInfo" class="dropdown-item" (click)="logout()">Logout</button>
+                    <button *ngIf="!isLoggedIn" class="dropdown-item" (click)="login()"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign in</button>
+                    
+                    <button *ngIf="isLoggedIn" class="dropdown-item" (click)="goProfile()"><i class="fa fa-user" aria-hidden="true"></i>Profile</button>
+                    <hr *ngIf="isLoggedIn" class="divider">
+                    <button *ngIf="isLoggedIn" class="dropdown-item" (click)="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</button>
                 </div>
             </div>
 
-            <span class="profile-controlls-username" *ngIf="userInfo" (click)="isMenuVisible = !isMenuVisible">{{userInfo.preferred_username}}</span>
+            <span class="profile-controlls-username" *ngIf="userInfo" (click)="isMenuVisible = !isMenuVisible">{{userInfo}}</span>
         </div>
 
     </div>

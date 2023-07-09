@@ -51,6 +51,6 @@ public class DbInitializer
     //To be moved in a separate seeding services
     public async Task TrySeedAsync()
     {
-      
+        return;
     }
 }

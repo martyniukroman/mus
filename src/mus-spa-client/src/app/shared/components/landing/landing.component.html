@@ -1,6 +1,10 @@
 <h1 class="header"> Hi there </h1>
 
-<button (click)="getData()">get data</button>
+<button (click)="getData()">get weather</button>
+<button (click)="getUserInfo()">get userinfo</button>
+<!-- <button (click)="getData()">get weather</button> -->
+<!-- <button (click)="getData()">get weather</button> -->
+
 
 <div class="data-container">
     <span *ngIf="wAuth$">Auth Result: {{(wAuth$ | async)?.weatherData}}</span>

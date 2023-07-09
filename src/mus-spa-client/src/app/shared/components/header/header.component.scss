@@ -17,7 +17,18 @@
 
         display: flex;
         width: 20rem;
-        justify-content: end;
+        justify-content: flex-end;
+        padding-right: 0.5rem;
+
+        .username {
+            display: flex;
+            margin: 0 0.5rem 0 0;
+            padding: 0;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            user-select: none;
+        }
 
         .profile-controlls {
 
@@ -28,14 +39,51 @@
                 cursor: pointer;
             }
 
+            .dropdown-toggle {
+                &:focus
+                {
+                    box-shadow: none;
+                }
+            }
+
+            .dropdown-menu {
+
+                background: rgba(22, 27, 34, 0.5);
+
+                .divider {
+                    background: #212121;
+                    margin: 0;
+                    padding: 0;
+                }
+                
+                
+                .dropdown-item {
+                    
+                    color: white;
+                    font-weight: 600;
+                    padding: 0.1rem;
+                    margin: 0;
+
+                    &:focus-visible,
+                    &:active,
+                    &:focus-within,
+                    &:target,
+                    &:hover {
+                        background-color: transparent !important;
+                        outline: -webkit-focus-ring-color auto 1px;
+                    }
+                }
+            }
+
             .profile-btn {
                 border-radius: 2rem;
                 width: 2rem;
                 height: 2rem;
                 font-weight: bolder;
                 font-size: 1.5rem;
-                background-color: var(mainBackgroundColor);
-                border-color: var(mainBackgroundColor);
+                background: rgba(22, 27, 34, 0.5);
+                backdrop-filter: blur(10px);
+                border-color: #c9d1d9;
 
 
                 &::after {
@@ -78,5 +126,20 @@
         cursor: pointer;
         display: flex;
         user-select: none;
+        align-items: center;
+        justify-content: center;
+
+        h3 {
+            margin: 0;
+            padding: 0;
+            color: #232323;
+
+            transition: all 2s;
+        
+            &:hover {
+                color: white    ;
+            }
+        }
+
     }
 }

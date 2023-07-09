@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { AuthCodeFlowConfig } from './auth/authCodeFlowConfig';
 
 @Component({
   selector: 'app-root',
@@ -7,18 +6,11 @@ import { AuthCodeFlowConfig } from './auth/authCodeFlowConfig';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
   title = 'mus-spa-client';
 
   constructor() {
   }
 
-  ngOnInit(): void {
-  }
 
-  public login() {
-  }
-
-  public implicit() {
-  }
-  
 }

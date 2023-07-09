@@ -4,7 +4,7 @@ using domain.entities;
 
 namespace application.users.Queries.GetUser;
 
-public class UserDto : IMapFrom<ApplicationUser>
+public class UserDto : IMapFrom<AppUser>
 {
     public UserDto() : this(string.Empty, string.Empty, string.Empty) { }
 
@@ -26,6 +26,6 @@ public class UserDto : IMapFrom<ApplicationUser>
 
     public void Mapping(Profile profile)
     {
-        profile.CreateMap<ApplicationUser, UserDto>();
+        profile.CreateMap<AppUser, UserDto>();
     }
 }

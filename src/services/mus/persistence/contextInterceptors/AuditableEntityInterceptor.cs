@@ -1,5 +1,4 @@
-﻿using application.common.interfaces;
-using domain.applicationExceptions;
+﻿using domain.applicationExceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -7,12 +6,8 @@ namespace persistence.contextInterceptors;
 
 public class AuditableEntityInterceptor : SaveChangesInterceptor
 {
-    private readonly ICurrentUserService _currentUserService;
-
-    public AuditableEntityInterceptor(
-        ICurrentUserService currentUserService)
+    public AuditableEntityInterceptor()
     {
-        _currentUserService = currentUserService;
     }
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -37,13 +32,13 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
         {
             if (entry.State == EntityState.Added)
             {
-                entry.Entity.CreatedBy = _currentUserService.UserId;
+                entry.Entity.UpdatedBy = null;
                 entry.Entity.CreatedOn = DateTime.Now;
             }
 
             if (entry.State == EntityState.Added || entry.State == EntityState.Modified)
             {
-                entry.Entity.UpdatedBy = _currentUserService.UserId;
+                entry.Entity.UpdatedBy = null;
                 entry.Entity.UpdatedOn = DateTime.Now;
             }
         }

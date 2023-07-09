@@ -1,0 +1,22 @@
+body {
+    background-color: #0d1117
+}
+
+p, h1, h2, h3, h4, h5, span {
+    color: #c9d1d9;
+}
+
+.form-control {
+    background: transparent;
+    border-color: #232323;
+    color: #c9d1d9;
+
+    &:focus-visible,
+    &:active,
+    &:focus-within,
+    &:target,
+    &:hover {
+        background-color: transparent !important;
+        outline: -webkit-focus-ring-color auto 1px;
+    }
+}

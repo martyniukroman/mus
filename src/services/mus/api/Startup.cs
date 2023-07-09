@@ -1,12 +1,7 @@
-using api.Services;
 using application;
-using application.common.interfaces;
-using FluentValidation.AspNetCore;
 using infrastructure;
-using infrastructure.identity.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +13,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using domain.entities;
+using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace api
 {
@@ -35,7 +33,7 @@ namespace api
 
         public IWebHostEnvironment Environment { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // This method gets called by the runtime. Use this method to add servi ces to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddInfrastructure();
@@ -55,46 +53,59 @@ namespace api
             services.AddHealthChecks()
                 .AddDbContextCheck<MusDbContext>();
 
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            //setup jwtToken
+            var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
+            services.Configure<JwtIssuerOptions>(jwtAppSettingOptions);
+            var jwtSettings = jwtAppSettingOptions.Get<JwtIssuerOptions>();
+            var secretKey = Encoding.ASCII.GetBytes(jwtSettings.Secret);
 
-            services.AddAuthentication(options =>
+            var tokenValidationParameters = new TokenValidationParameters
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(o =>
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidateAudience = false, // should be validated on production
+
+                ValidIssuer = jwtSettings.Issuer,
+                ValidAudience = jwtSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(secretKey),
+            };
+            services.AddAuthentication(op =>
             {
-                //o.Authority = Configuration["JWT:Authority"];
-                //o.Audience = Configuration["JWT:Audience"];
-
-                o.Authority = "http://localhost:8080/auth/realms/mus";
-                o.Audience = "mus-app";
-
-                o.IncludeErrorDetails = true;
-
-                o.RequireHttpsMetadata = false;
-                o.Events = new JwtBearerEvents
-                {
-                    OnAuthenticationFailed = c =>
-                    {
-                        c.NoResult();
-                        c.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        c.Response.ContentType = "text/plain";
-                        return c.Response.WriteAsync(" Authority: " + o.Authority + " Audience: " + o.Audience + " Ex: " + c.Exception.Message + "SYSTEM.DATETIME: " + System.DateTime.UtcNow.ToString());
-                    }
-                };
-                o.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateAudience = true,
-                    ValidateIssuerSigningKey = true,
-                    //ValidIssuer = Configuration["JWT:AuthorityUrl"],
-                    ValidIssuer = "http://localhost:8080",
-                    ValidateLifetime = true,
-                };
+                op.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                op.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                op.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(configureOptions =>
+            {
+                configureOptions.TokenValidationParameters = tokenValidationParameters;
+            });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireLoggedIn",
+                    policy => policy.RequireRole("Admin", "Customer").RequireAuthenticatedUser());
+                options.AddPolicy("RequireAdministratorRole",
+                    policy => policy.RequireRole("Admin").RequireAuthenticatedUser());
             });
 
-            services.AddAuthorization();
+            //setupIdentity
+            var identityBuilder = services.AddIdentityCore<AppUser>(o =>
+            {
+                // configure identity options
+                o.Password.RequireDigit = false;
+                o.Password.RequireLowercase = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequiredLength = 6;
+                o.User.RequireUniqueEmail = true;
+                o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                o.Lockout.MaxFailedAccessAttempts = 3;
+                o.Lockout.AllowedForNewUsers = true;
+            }
+                                      ).AddRoles<IdentityRole>().AddEntityFrameworkStores<MusDbContext>()
+                                      .AddDefaultTokenProviders() ?? throw new ArgumentNullException(nameof(services));
+
+            identityBuilder =
+                new IdentityBuilder(identityBuilder.UserType, typeof(IdentityRole), identityBuilder.Services);
+            identityBuilder.AddEntityFrameworkStores<MusDbContext>().AddDefaultTokenProviders();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -150,7 +161,6 @@ namespace api
 
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.UseEndpoints(endpoints =>
             {
