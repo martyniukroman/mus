@@ -1,12 +1,23 @@
 <h1 class="header"> Hi there </h1>
 
 <button (click)="getData()">get weather</button>
-<button (click)="getUserInfo()">get userinfo</button>
+<button (click)="register()">register</button>
+<button (click)="login()">login</button>
+<button (click)="logout()">logout</button>
 <!-- <button (click)="getData()">get weather</button> -->
 <!-- <button (click)="getData()">get weather</button> -->
 
+<div *ngIf="isRegister">
+    <input type="text" [(ngModel)]="rEmail" placeholder="email" />
+    <input type="text" [(ngModel)]="rDisplayName" placeholder="display name" />
+    <input type="text" [(ngModel)]="rPassword" placeholder="password" />
+</div>
+<div *ngIf="isLogin">
+    <input type="text" [(ngModel)]="lEmail" placeholder="email" />
+    <input type="text" [(ngModel)]="lPassword" placeholder="password" />
+</div>
 
 <div class="data-container">
-    <span *ngIf="wAuth$">Auth Result: {{(wAuth$ | async)?.weatherData}}</span>
-    <span *ngIf="wNoAuth$">No Auth Result: {{(wNoAuth$ | async)?.weatherData}}</span>
+    <span *ngIf="wAuth">Auth Result: {{wAuth.weatherData}}</span>
+    <span *ngIf="wNoAuth">No Auth Result: {{wNoAuth.weatherData}}</span>
 </div>

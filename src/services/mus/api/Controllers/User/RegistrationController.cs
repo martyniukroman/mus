@@ -1,10 +1,7 @@
 ﻿using domain.entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 using application.account.commands.RegisterUser;
 using Microsoft.AspNetCore.Authorization;
 
@@ -23,34 +20,10 @@ public class RegistrationController : BaseController
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<IActionResult> Register([FromBody] RegisterUserCommandDto formData)
+    public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
     {
-        // holds errors related to registration process
-        var errors = new List<string>();
-
-        var user = new AppUser()
-        {
-            Email = formData.Email,
-            UserName = formData.DisplayName,
-            SecurityStamp = Guid.NewGuid().ToString(),
-        };
-
-        var result = await _userManager.CreateAsync(user, formData.Password);
-        if (result.Succeeded)
-        {
-            await _userManager.AddToRoleAsync(user, "Customer");
-            return new OkObjectResult(result);
-        }
-        else
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(error.Code, error.Description);
-                errors.Add(error.Description);
-            }
-
-            return new BadRequestObjectResult(errors);
-        }
+        var responce = await Mediator.Send(command);
+        return Ok(responce);
     }
 
     [HttpGet]

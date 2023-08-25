@@ -18,14 +18,14 @@ namespace api.Controllers.User;
 
 [Route("api/[controller]")]
 [ApiController]
-public class RefreshTokenController : BaseController
+public class AuthController : BaseController
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly MusDbContext _musDbContext;
     private readonly JwtIssuerOptions _jwtIssuerOptions;
     private readonly IConfiguration _configuration;
 
-    public RefreshTokenController(UserManager<AppUser> userManager,
+    public AuthController(UserManager<AppUser> userManager,
             MusDbContext musDbContext,
             IOptions<JwtIssuerOptions> options,
             IConfiguration configuration)

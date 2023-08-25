@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using domain.entities;
 using Microsoft.AspNetCore.Identity;
 using System;
+using MediatR;
 
 namespace api
 {

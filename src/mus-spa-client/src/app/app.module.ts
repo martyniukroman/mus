@@ -1,36 +1,21 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 
 import { AppComponent } from './app.component';
-import { UserModule } from './modules/user/user.module';
 import { LandingComponent } from './shared/components/landing/landing.component';
 import { SharedModule } from './shared/shared.module';
+import { TokenInterceptor } from './shared/Interceptors/token.interceptor';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { CateringModule } from './modules/catering/catering.module';
 
 const importModules: any[] = [
-  UserModule,
+  CateringModule,
   SharedModule,
 ];
-
-function initializeKeycloak(keycloak: KeycloakService) {
-  return () =>
-    keycloak.init({
-      config: {
-        url: 'http://localhost:8080' + '/auth',
-        realm: 'mus',
-        clientId: 'mus-app'
-      },
-      initOptions: {
-        onLoad: 'check-sso',
-        silentCheckSsoRedirectUri:
-          window.location.origin + '/assets/silent-check-sso.html'
-      }
-    });
-}
-
 
 @NgModule({
   declarations: [
@@ -40,23 +25,24 @@ function initializeKeycloak(keycloak: KeycloakService) {
     BrowserModule,
     HttpClientModule,
     NgbModule,
-    KeycloakAngularModule,
+    FormsModule,
+    CommonModule,
     RouterModule.forRoot(
       [
         { path: '', component: LandingComponent },
-        { path: 'mus', component: LandingComponent },
-        { path: 'user', loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule) }
+        { path: 'landing', component: LandingComponent },
+        { path: 'catering', loadChildren: () => import('./modules/catering/catering.module').then(m => m.CateringModule) },
+        { path: 'customer', loadChildren: () => import('./modules/customer/customer.module').then(m => m.CustomerModule) }
       ]
       ),
       ...importModules,
     ],
   providers: [
     {
-      provide: APP_INITIALIZER,
-      useFactory: initializeKeycloak,
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
       multi: true,
-      deps: [KeycloakService]
-    }
+    },
   ],
   bootstrap: [AppComponent]
 })

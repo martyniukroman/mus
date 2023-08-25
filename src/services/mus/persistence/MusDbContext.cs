@@ -1,13 +1,17 @@
-﻿using domain.entities;
+﻿using application.common.interfaces;
+using domain.applicationExceptions;
+using domain.entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using persistence.contextInterceptors;
+using System;
 using System.Reflection;
 
 namespace persistence;
 
-public class MusDbContext : IdentityDbContext<AppUser>
+public class MusDbContext : IdentityDbContext<AppUser> , IMusDbContext
 {
 
     private readonly AuditableEntityInterceptor _auditableEntityInterceptor;
@@ -32,6 +36,26 @@ public class MusDbContext : IdentityDbContext<AppUser>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.AddInterceptors(_auditableEntityInterceptor);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+        foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entry.Entity.CreatedBy = null;
+                    entry.Entity.CreatedOn = DateTime.Now;
+                    break;
+                case EntityState.Modified:
+                    entry.Entity.UpdatedBy = null;
+                    entry.Entity.UpdatedOn = DateTime.Now;
+                    break;
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
     }
 
     public DbSet<AppUserImage> AppUserImages { set; get; }

@@ -1,4 +1,5 @@
-﻿using domain.entities;
+﻿using application.common.interfaces;
+using domain.entities;
 using infrastructure.identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +26,9 @@ public static class PersistenceDI
                     builder => builder.MigrationsAssembly(typeof(MusDbContext).Assembly.FullName)));
         //}
 
+        services.AddScoped<IMusDbContext>(provider => provider.GetService<MusDbContext>() ?? throw new Exception("no context found"));
         services.AddScoped<DbInitializer>();
+
 
         return services;
     }

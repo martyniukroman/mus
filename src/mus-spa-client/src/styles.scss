@@ -20,3 +20,22 @@ p, h1, h2, h3, h4, h5, span {
         outline: -webkit-focus-ring-color auto 1px;
     }
 }
+
+
+.btn-light {
+    display: flex;
+    border: 1px solid rgba(255, 255, 255, 0.123);
+    background: none;
+    border-radius: 0.2rem;
+    padding: 0.3rem 1rem;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.678);
+    backdrop-filter: blur(6px);
+    transition: all 0.5s;
+    font-weight: 400;
+
+    &:hover {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.164);
+    }
+}
