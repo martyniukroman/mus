@@ -18,14 +18,10 @@ export class LandingComponent {
   public wNoAuth: any;
 
   public isRegister: boolean = false;
-  public isLogin: boolean = false;
 
   public rEmail: any = '';
   public rDisplayName: any = '';
   public rPassword: any = '';
-  
-  public lEmail: string = '';
-  public lPassword: string = '';
 
   constructor(
     private readonly _httpClient: HttpClient,
@@ -61,17 +57,6 @@ export class LandingComponent {
           console.log(x);
         });
       }
-    });
-  }
-
-  public login(): void {
-    if(this.isLogin == false) {
-      this.isLogin = true;
-      return;
-    }
-
-    this._authService.login(this.lEmail, this.lPassword).subscribe(x => {
-      console.log(x);
     });
   }
 

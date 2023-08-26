@@ -6,8 +6,8 @@
     <div class="right-block" *ngIf="isLoggedIn">
         {{userName}}
     </div>
-    <div class="right-block">
-        <button class="btn-light" *ngIf="!isLoggedIn">
+    <div class="right-block" *ngIf="!isLoggedIn" >
+        <button class="btn-l" (click)="loginClick()">
             log in
         </button>
     </div>

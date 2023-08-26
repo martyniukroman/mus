@@ -2,7 +2,6 @@
 
 <button (click)="getData()">get weather</button>
 <button (click)="register()">register</button>
-<button (click)="login()">login</button>
 <button (click)="logout()">logout</button>
 <!-- <button (click)="getData()">get weather</button> -->
 <!-- <button (click)="getData()">get weather</button> -->
@@ -11,10 +10,6 @@
     <input type="text" [(ngModel)]="rEmail" placeholder="email" />
     <input type="text" [(ngModel)]="rDisplayName" placeholder="display name" />
     <input type="text" [(ngModel)]="rPassword" placeholder="password" />
-</div>
-<div *ngIf="isLogin">
-    <input type="text" [(ngModel)]="lEmail" placeholder="email" />
-    <input type="text" [(ngModel)]="lPassword" placeholder="password" />
 </div>
 
 <div class="data-container">

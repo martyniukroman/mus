@@ -64,4 +64,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this._router.navigate(['user/profile']);
     this.isMenuVisible = false;
   }
+
+  public loginClick(): void {
+    this._router.navigate(['login']);
+  }
 }

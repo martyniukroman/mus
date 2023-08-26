@@ -1,0 +1,39 @@
+<div class="wrapper">
+
+    <form (ngSubmit)="loginSubmit()" [formGroup]="loginForm">
+
+        <div class="field">
+            <label for="first-name" for="email">Enter your email: </label>
+            <input type="text" class="input-l" placeholder="email" formControlName="email" id="email" />
+            <span class="error"
+                *ngIf="loginForm.controls['email'].touched && loginForm.controls['email'].status == 'INVALID'">
+                <lucide-icon [size]="16" name="ban" class="my-icon"></lucide-icon>
+                Email is invalid
+            </span>
+        </div>
+
+        <div class="field">
+            <label for="first-name" for="password">Password: </label>
+            <input type="password" class="input-l" placeholder="password" formControlName="password" id="password" />
+            <span class="error"
+                *ngIf="loginForm.controls['password'].touched && loginForm.controls['password'].status == 'INVALID'">
+                <lucide-icon [size]="16" name="ban" class="my-icon"></lucide-icon>
+                Password is invalid
+            </span>
+        </div>
+
+        <div class="error-block">
+            <span class="error error-main" *ngIf="isError">
+                <lucide-icon [size]="16" name="ban" class="my-icon"></lucide-icon>
+                Email or Password is invalid
+            </span>
+
+            <button class="btn-l" type="submit" [disabled]="!loginForm.valid">
+                <lucide-icon *ngIf="loginForm.valid" [size]="20" name="chevron-right-circle"
+                    class="my-icon"></lucide-icon>
+                Submit
+            </button>
+        </div>
+    </form>
+
+</div>

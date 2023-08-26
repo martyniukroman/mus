@@ -11,6 +11,7 @@ import { TokenInterceptor } from './shared/Interceptors/token.interceptor';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CateringModule } from './modules/catering/catering.module';
+import { LoginComponent } from './shared/components/login/login.component';
 
 const importModules: any[] = [
   CateringModule,
@@ -31,8 +32,9 @@ const importModules: any[] = [
       [
         { path: '', component: LandingComponent },
         { path: 'landing', component: LandingComponent },
+        { path: 'login', component: LoginComponent },
         { path: 'catering', loadChildren: () => import('./modules/catering/catering.module').then(m => m.CateringModule) },
-        { path: 'customer', loadChildren: () => import('./modules/customer/customer.module').then(m => m.CustomerModule) }
+        { path: 'customer', loadChildren: () => import('./modules/customer/customer.module').then(m => m.CustomerModule) },
       ]
       ),
       ...importModules,

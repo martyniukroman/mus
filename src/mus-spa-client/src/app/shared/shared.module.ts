@@ -3,24 +3,31 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LandingComponent } from './components/landing/landing.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './components/login/login.component';
+import { Ban, ChevronRightCircle, LucideAngularModule,} from 'lucide-angular';
 
-const modules = [
+const components = [
   HeaderComponent,
-  LandingComponent
+  LandingComponent,
+  LoginComponent,
 ]
+
+const icons = [ LucideAngularModule.pick({Ban, ChevronRightCircle}) ];
 
 @NgModule({
   declarations: [
-    ...modules //!To be declared in the modules[]
+    ...components,
   ],
   imports: [
     CommonModule,
     NgbModule,
     FormsModule,
+    ReactiveFormsModule,
+    ...icons
   ],
   exports: [
-    ...modules
+    ...components
   ]
 })
 export class SharedModule { }
